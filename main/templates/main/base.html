@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BloodBank</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@2.9.3/dist/umd/popper.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a red background color to the navbar */
+    .navbar-dark.bg-dark {
+      background-color: #8B0000;
+    }
+
+    /* Add a white color to the text of navbar links */
+    .navbar-dark .navbar-nav .nav-link {
+      color: #ffffff;
+    }
+
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      padding: 25px;
+      background-color: #222;
+      border-color: #080808;
+    }
+
+    /* Add a white color to the text of footer */
+    footer p {
+      color: #ffffff;
+    }
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'main:index' %}">BloodBank</a>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'main:update_user_view' %}"><span class="fa fa-user"></span> Update Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'main:logout_view' %}"><span class="fa fa-sign-out"></span> Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin_user:admin_login' %}"><span class="fa fa-sign-in"></span> AdminLogin</a>
+          </li> 
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'main:login_view' %}"><span class="fa fa-sign-in"></span> Login</a>
+          </li>
+          
+          {% endif %}
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{% block content %}
+{% endblock %}
+<br>
+
+<footer class="container-fluid text-center">
+  <p>Made by - Anant Pednekar</p>
+</footer>
+
+</body>
+</html>
