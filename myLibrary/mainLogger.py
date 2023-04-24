@@ -1,4 +1,6 @@
-class CustomLogger:
+import datetime
+
+class myCustomLogger:
     
     def __init__(self, name, level):
         self.name = name

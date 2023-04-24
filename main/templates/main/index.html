@@ -1,6 +1,7 @@
 {% extends 'main/base.html' %}
 {% load bootstrap4%}
 {% block content %}
+
 <div class="container">
   <br>
   <h1 class="text-center mb-5"> Blood Supply</h1>
@@ -66,12 +67,11 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if appointment.appointment_date >= date.today %}
-                                <a href="{% url 'main:delete_appointment_view' appointment.pk %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this appointment?')">Delete</a>
-                            
+                            {% if appointment.appointment_date >= datetimenow %}
+                                <a href="{% url 'main:delete_appointment' appointment.pk %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this appointment?')">Delete</a>
                             {% else %}
                               <span style="color:green;">DONE</span>
-                          {% endif %}
+                            {% endif %}
                         </td>
                     </tr>
                 {% empty %}

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from admin_user.models import Clinic
 from django.core.validators import MinLengthValidator, EmailValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
+from myLibrary.myMainValidator import MainValidation
 
 class UserProfile(models.Model):
     BLOOD_TYPES = (
@@ -18,9 +19,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     blood_type = models.CharField(max_length=3, choices=BLOOD_TYPES)
     location = models.CharField(max_length=255)
-    age = models.IntegerField()
+    age = models.IntegerField(validators=[MainValidation.is_valid_age])
     gender = models.CharField(max_length=20)
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, validators=[MainValidation.is_valid_phone])
     is_donor = models.BooleanField(default=False)
 
 

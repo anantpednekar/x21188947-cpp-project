@@ -6,15 +6,19 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-
+from myLibrary.mainLogger import myCustomLogger
+import datetime
 from admin_user.models import Clinic
 from main.models import Appointment, UserProfile
 from .forms import AppointmentForm, RegistrationForm, UpdateUserForm
+
+logger = myCustomLogger('main.views', 'DEBUG')
 
 @login_required  
 def delete_appointment_view(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk)
     appointment.delete()
+    logger.info(f"Appointment with pk={pk} deleted by {request.user} at {datetime.datetime.now()}")
     return redirect('main:index')
 
 @login_required
@@ -27,6 +31,7 @@ def schedule_appointment_view(request):
             appointment.user = request.user
             appointment.save()
             #messages.success(request, 'Appointment scheduled successfully!')
+            logger.debug(f"Appointment scheduled successfully by {request.user} at {datetime.datetime.now()} ") 
             return redirect('main:index')
     else:
         form = AppointmentForm()
@@ -36,7 +41,6 @@ def schedule_appointment_view(request):
 def update_user_view(request):
     user = request.user
     user_profile = user.userprofile  # get the UserProfile object associated with the User object
-    
     if request.method == 'POST':
         form = UpdateUserForm(request.POST, instance=user)
         if form.is_valid():
@@ -47,6 +51,7 @@ def update_user_view(request):
             user_profile.phone_number = form.cleaned_data['phone_number']
             user_profile.is_donor = form.cleaned_data['is_donor']
             user_profile.save()
+            logger.debug(f"Profile was successfully updated by {request.user} at {datetime.datetime.now()} ") 
             #messages.success(request, 'Your profile was successfully updated!')
             return redirect('main:index')
     else:
@@ -76,6 +81,7 @@ def login_view(request):
         # If the user is authenticated, log them in and redirect to the homepage
         if user is not None:
             login(request, user)
+            logger.debug(f" User : {request.user} logged in at {datetime.datetime.now()} ") 
             #messages.success(request, 'logged in successfully.')
             return redirect('main:index')
         else:
@@ -86,6 +92,7 @@ def login_view(request):
 def logout_view(request):
     """Logout View"""
     logout(request)
+    logger.debug(f"user : {request.user} logged out at {datetime.datetime.now()} ") 
     #åmessages.success(request, 'logged out successfully.')
     return redirect('main:index')
 
@@ -98,6 +105,7 @@ def register_user_view(request):
             password = form.cleaned_data.get('password1')
             user = authenticate(request, username=username, password=password)
             login(request, user)
+            logger.debug(f"User {request.user} Registered at {datetime.datetime.now()} ") 
             return redirect('main:index')
     else:
         form = RegistrationForm()
@@ -106,11 +114,10 @@ def register_user_view(request):
 
 # Create your views here.
 def index(request):
+    logger.debug("Index view ") 
     appointments_1 = Appointment.objects.all()
-    # get the appointments for all blood types
-    #appointments = Appointment.objects.filter(is_donation=True, appointment_date__lt=timezone.now())
-
-    # get the count of each blood type
+    
+    
     all_blood_types = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
     blood_type_count = UserProfile.objects.filter(
         is_donor=True,
@@ -127,4 +134,4 @@ def index(request):
                 break
         blood_type_list.append({'blood_type': blood_type, 'count': count})
 
-    return render(request, 'main/index.html', {'appointments': appointments_1, 'blood_type_count': blood_type_list})
+    return render(request, 'main/index.html', {'appointments': appointments_1, 'blood_type_count': blood_type_list, 'datetimenow':datetime.datetime.now().date()})
