@@ -3,6 +3,39 @@
 {% block content %}
 <div class="container">
   <br>
+  <h1 class="text-center mb-5"> Blood Supply</h1>
+  <hr class="my-5">
+  <div class="row">
+      <div class="col-md-12">
+        <div class="container">
+          <table class="table table-bordered">
+            <thead class="thead-light">
+              <tr>
+                <th>Blood Type</th>
+                <th>Count</th>
+                <th>Graph</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bt in blood_type_count %}
+              <tr>
+                <td>{{ bt.blood_type }}</td>
+                <td>{{ bt.count }}</td>
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: {{ bt.count }}%;" aria-valuenow="{{ bt.count }}" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+
+   {% if user.is_authenticated %}
+  <br>
   <h1 class="text-center mb-5"> Appointment Manager</h1>
 
   <hr class="my-5">
@@ -51,6 +84,7 @@
           <a href="{% url 'main:schedule_appointment' %}" class="btn btn-primary">Schedule Appointment</a>
       </div>
   </div>
+  {% endif %}
 </div>
 
 

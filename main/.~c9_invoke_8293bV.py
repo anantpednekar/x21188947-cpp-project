@@ -1,23 +1,28 @@
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from .forms import RegistrationForm, UpdateUserForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
-from django.db.models import Count
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 
-from admin_user.models import Clinic
-from main.models import Appointment, UserProfile
-from .forms import AppointmentForm, RegistrationForm, UpdateUserForm
+from .models import Clinic, Appointment
+from .forms import AppointmentForm
 
-@login_required  
+from django.shortcuts import get_object_or_404
+
+
+def clinic_delete(request, pk):
+    #messages.success(request, 'Recipe deleted successfully.')
+    clinic = get_object_or_404(Clinic, pk=pk)
+    clinic.delete()
+    
 def delete_appointment_view(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk)
     appointment.delete()
     return redirect('main:index')
 
-@login_required
+
 def schedule_appointment_view(request):
     clinics = Clinic.objects.all()
     if request.method == 'POST':
@@ -32,7 +37,7 @@ def schedule_appointment_view(request):
         form = AppointmentForm()
     return render(request, 'main/schedule_appointment.html', {'form': form, 'clinics': clinics})
 
-@login_required
+
 def update_user_view(request):
     user = request.user
     user_profile = user.userprofile  # get the UserProfile object associated with the User object
@@ -82,7 +87,6 @@ def login_view(request):
             form.add_error(None, "Invalid Username or password")
     return render(request, 'main/user_login.html', {'form': form})
 
-
 def logout_view(request):
     """Logout View"""
     logout(request)
@@ -106,25 +110,5 @@ def register_user_view(request):
 
 # Create your views here.
 def index(request):
-    appointments_1 = Appointment.objects.all()
-    # get the appointments for all blood types
-    #appointments = Appointment.objects.filter(is_donation=True, appointment_date__lt=timezone.now())
-
-    # get the count of each blood type
-    all_blood_types = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
-    blood_type_count = UserProfile.objects.filter(
-        is_donor=True,
-        user__appointment__is_donation=True,
-        user__appointment__appointment_date__lt=timezone.now()
-    ).values('blood_type').annotate(count=Count('blood_type'))
-    
-    blood_type_list = []
-    for blood_type in all_blood_types:
-        count = 0
-        for bt in blood_type_count:
-            if bt['blood_type'] == blood_type:
-                count = bt['count']
-                break
-        blood_type_list.append({'blood_type': blood_type, 'count': count})
-
-    return render(request, 'main/index.html', {'appointments': appointments_1, 'blood_type_count': blood_type_list})
+    appointments = Appointment.objects.all()
+    return render(request, 'main/index.html',{'appointments': appointments})
