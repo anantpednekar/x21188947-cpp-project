@@ -115,8 +115,8 @@ def register_user_view(request):
 # Create your views here.
 def index(request):
     logger.debug("Index view ") 
+    Appointment.objects.filter(user=request.user)
     appointments_1 = Appointment.objects.all()
-    
     
     all_blood_types = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
     blood_type_count = UserProfile.objects.filter(
