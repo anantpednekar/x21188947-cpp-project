@@ -1,4 +1,20 @@
-# Readme.md
+# BloodBank Management System
+
+## Features
+Admin App
+- Admin Login
+- Add Clinic
+- List Clinics
+- Delete Clinic’s
+- Analytics
+
+Main App
+- user Login
+- User Register
+- Update User
+- List Appointments
+- Schedule Appointment
+- Analytics
 
 ## Requirements
 
